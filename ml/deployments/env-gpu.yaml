@@ -1,0 +1,30 @@
+kind: Environment
+metadata:
+  name: torch
+  namespace: default
+spec:
+  poolsize: 3
+  runtime:
+    image: centaurusinfra/serverless-python-env:0.5.9
+    podspec:
+      containers:
+      - name: torch  #name must be same as env name
+        image: centaurusinfra/serverless-python-env:0.5.9
+        #command: ["sh", "-c", "sleep infinity"]
+        env:
+          - name: NVIDIA_VISIBLE_DEVICES
+            value: all
+          - name: NVIDIA_DRIVER_CAPABILITIES
+            value: compute,utility
+          - name: LOG_LEVEL
+            value: debug
+        volumeMounts:
+          - name: output
+            mountPath: /output
+            readOnly: false
+      volumes:
+        - name: output
+          hostPath:
+            path: /tmp
+  terminationGracePeriod: 15
+  version: 2
