@@ -14,7 +14,7 @@ WORKDIR /app
 COPY requirements.txt /app
 RUN pip3 install -r requirements.txt
 
-RUN pip3 install serverlessdl==0.5.18
+RUN pip3 install serverlessdl==1.0.1
 
 
 # Copy the server and start
