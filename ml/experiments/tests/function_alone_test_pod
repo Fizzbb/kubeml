@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: serverless
+spec:
+  containers:
+    - name: function
+      image: centaurusinfra/serverless-python-env:0.5.9
+      imagePullPolicy: IfNotPresent   
+      resources:
+        limits:
+          nvidia.com/gpu: 1  # requesting 1 GPU
+      volumeMounts:
+      - mountPath: /output/
+        name: host-disk
+  volumes:
+  - name: host-disk
+    hostPath:
+      path: /tmp/function_test
+      type: Directory
+#  nodeName: titan34  # specify the node to run if needed
