@@ -219,7 +219,13 @@ class KubeDataset(data.Dataset, ABC):
             else:
                 data = np.vstack([data, d])
                 labels = np.hstack([labels, l.flatten()])
-
+                
+        # add local shuffle by zz, 
+        temp = list(zip(data, labels))
+        np.random.shuffle(temp)
+        data, labels = zip(*temp)
+        logging.debug("Add local random shuffle before returning the data and lables")
+        
         return data, labels.flatten()
 
     @abstractmethod
