@@ -402,6 +402,7 @@ class KubeModel(ABC):
 
 
         # Determine the batches that we need to train on and the first subset id
+        # zz notes: to achieve global shuffle, we need to write this function to return exact document id, not a range, and modify the monogodb query in the dataset.py file line 199
         assigned_subsets = split_minibatches(range(self._dataset.num_docs),
                                              self.args._N)[self.args._func_id]
 
