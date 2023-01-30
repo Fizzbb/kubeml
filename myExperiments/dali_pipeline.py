@@ -56,10 +56,10 @@ eii = ExternalInputIterator(data_npy, label_npy, batch_size)
 
 @pipeline_def(batch_size=batch_size, num_threads=4, device_id=0)
 def pipe1():
-    # device='gpu' is not supported for this fn, gpu direct read requires gds, not enabled in the container
     # step 1) read data
+    # device='gpu' is not supported for this fn, gpu direct read requires gds, not enabled in the container
     data, label = fn.external_source(device='cpu', source=eii, num_outputs=2) # must define num_outputs=2, otherwise mix data and label tensor, and complain tensor dim mismatch in a batch
-    # step 2)
+    # step 2) crop, mirror, normalization
     data = fn.crop_mirror_normalize(
         data.gpu(),  #send data to gpu, if dont add .gpu(), and remove device='gpu', execute on cpu, and current setting cpu is faster
         crop_h=32,
