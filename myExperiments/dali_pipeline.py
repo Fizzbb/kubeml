@@ -5,7 +5,26 @@ import time
 import os
 import numpy as np
 
-data_dir = "/root/data/cifar-10-batches-py/"
+def gen_cifar10_npy():
+    # the cifar10 dataset is already saved in numpy array, not a image format
+    train_data = datasets.CIFAR10('./data', train=True, download=True)
+    validation_data = datasets.CIFAR10('./data', train=False, download=True)
+
+    cifar10_x_train = train_data.data
+    cifar10_y_train = train_data.targets
+    cifar10_x_test = validation_data.data
+    cifar10_y_test = validation_data.targets
+
+    np.save("./data/cifar10_x_train", cifar10_x_train)
+    np.save("./data/cifar10_y_train", cifar10_y_train)
+    np.save("./data/cifar10_x_test", cifar10_x_test)
+    np.save("./data/cifar10_y_test", cifar10_y_test)
+
+# one time function
+gen_cifar10_npy()
+
+data_dir = "./data"
+
 data_path = os.path.join(data_dir, 'cifar10_x_train.npy')
 label_path = os.path.join(data_dir, 'cifar10_y_train.npy')
 data_npy = np.load(data_path)
@@ -42,12 +61,13 @@ def pipe1():
     data, label = fn.external_source(device='cpu', source=eii, num_outputs=2) # must define num_outputs=2, otherwise mix data and label tensor, and complain tensor dim mismatch in a batch
     # step 2)
     data = fn.crop_mirror_normalize(
-        data,
-       # crop_h=224,
-       # crop_w=224,
+        data.gpu(),  #send data to gpu, if dont add .gpu(), and remove device='gpu', execute on cpu, and current setting cpu is faster
+        crop_h=32,
+        crop_w=32,
         mean=[0.485, 0.456, 0.406],
-        std=[0.229, 0.224, 0.225]
-       # mirror=fn.random.coin_flip()
+        std=[0.229, 0.224, 0.225],
+        mirror=fn.random.coin_flip(),
+        device='gpu'
         )
     # add more steps/fns if you like
     return data, label
